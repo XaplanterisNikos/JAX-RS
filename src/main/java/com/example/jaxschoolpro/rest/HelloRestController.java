@@ -1,21 +1,29 @@
 package com.example.jaxschoolpro.rest;
 
 import com.example.jaxschoolpro.dto.TeacherInsertDTO;
+import com.example.jaxschoolpro.dto.UserDTO;
 import com.example.jaxschoolpro.model.Teacher;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
+
 
 import java.awt.*;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Path("/hello")
 public class HelloRestController {
+
+    // create a validator factory instance and validator
+    private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    private final Validator validator =  factory.getValidator();
 
     @Path("/say-hello")
     @GET
@@ -71,6 +79,38 @@ public class HelloRestController {
         }
 
         return Response.status(Response.Status.OK).entity(teachersDTO).build();
+    }
+
+
+    // Data Binding - Validation
+
+    @POST
+    @Path("/users")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response saveForm(MultivaluedMap<String ,String> params, @Context UriInfo uriInfo){
+        UserDTO  dto = new UserDTO();
+        // multivalueMap bind form values
+        mapToDto(params,dto);
+
+        Set<ConstraintViolation<UserDTO>> violations = validator.validate(dto);
+        if(!violations.isEmpty()){
+            List<String> errors = new ArrayList<>();
+            for(ConstraintViolation<UserDTO> violation: violations){
+                errors.add(violation.getMessage());
+            }
+            return Response.status(Response.Status.BAD_REQUEST).entity(errors).build();
+        }
+
+        UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
+        URI uri = uriBuilder.path("1").build();
+        return Response.status(Response.Status.CREATED).location(uri).build();
+    }
+
+    // mapper
+    private void mapToDto(MultivaluedMap<String,String> params,UserDTO dto){
+        dto.setUsername(params.getFirst("username"));
+        dto.setPassword(params.getFirst("password"));
     }
 
 

@@ -1,3 +1,4 @@
+com\example\jaxschoolpro\dto\UserDTO.class
 com\example\jaxschoolpro\dto\TeacherUpdateDTO.class
 com\example\jaxschoolpro\model\Teacher.class
 com\example\jaxschoolpro\HelloApplication.class
