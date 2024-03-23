@@ -1,0 +1,6 @@
+com\example\jaxschoolpro\dto\TeacherUpdateDTO.class
+com\example\jaxschoolpro\model\Teacher.class
+com\example\jaxschoolpro\HelloApplication.class
+com\example\jaxschoolpro\dto\TeacherInsertDTO.class
+com\example\jaxschoolpro\dto\TeacherReadOnlyDTO.class
+com\example\jaxschoolpro\rest\HelloRestController.class
