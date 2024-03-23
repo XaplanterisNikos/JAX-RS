@@ -59,7 +59,7 @@ public class HelloRestController {
     public Response getTeachers(@QueryParam("lastname") String lastname){
 
         // dao.getTeachersByLastname(lastname);
-        // Asume it returns a list with results
+        // Assume it returns a list with results
 
         List<Teacher> teachers = Arrays.asList(
                 new Teacher(1l,"SSN1","Irini","Xaplanteri"),
@@ -111,6 +111,24 @@ public class HelloRestController {
     private void mapToDto(MultivaluedMap<String,String> params,UserDTO dto){
         dto.setUsername(params.getFirst("username"));
         dto.setPassword(params.getFirst("password"));
+    }
+
+    @POST
+    @Path("/teachers")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response insertTeacher(TeacherInsertDTO dto,@Context UriInfo uriInfo){
+        Set<ConstraintViolation<TeacherInsertDTO>> violations = validator.validate(dto);
+        if(!violations.isEmpty()){
+            List<String> errors = new ArrayList<>();
+            for(ConstraintViolation<TeacherInsertDTO> violation : violations){
+                errors.add(violation.getMessage());
+            }
+            return Response.status(Response.Status.BAD_REQUEST).entity(errors).build();
+        }
+
+        UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
+        return Response.created(uriBuilder.path("1").build()).entity(dto).build();
     }
 
 
