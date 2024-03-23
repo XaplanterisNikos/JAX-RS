@@ -80,10 +80,8 @@ public class TeacherRestController {
         return Response.status(Response.Status.OK).entity(dto).build();
     }
 
-    // mapper
-    private TeacherReadOnlyDTO mapFrom(Teacher teacher){
-        return new TeacherReadOnlyDTO(teacher.getId(), teacher.getSsn(), teacher.getFirstname(), teacher.getLastname());
-    }
+
+
 
     @POST
     @Path("")
@@ -110,7 +108,29 @@ public class TeacherRestController {
     }
 
 
+    @DELETE
+    @Path("/{teacherId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteTeacher(Long teacherId){
+
+        // Teacher teacher = service.delete(teacherId);
+        // Deleted Teacher
+        Teacher teacher = new Teacher(2L,"SSN","Alice","W.");
+        if(teacher == null){
+            return Response.status(Response.Status.NOT_FOUND).entity("Not Found").build();
+        }
+        TeacherReadOnlyDTO dto = mapFromTeacher(teacher);
+        return Response.status(Response.Status.OK).entity(dto).build();
+    }
+
+
     // Mappers
+
+    private TeacherReadOnlyDTO mapFrom(Teacher teacher){
+        return new TeacherReadOnlyDTO(teacher.getId(), teacher.getSsn(), teacher.getFirstname(), teacher.getLastname());
+    }
+
+
     private TeacherInsertDTO mapFromMultiV(MultivaluedMap<String,String> params){
         TeacherInsertDTO dto = new TeacherInsertDTO();
         dto.setSsn(params.getFirst("ssn"));
